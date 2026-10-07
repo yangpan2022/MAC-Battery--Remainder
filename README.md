@@ -7,7 +7,7 @@
 | 部分 | 是什么 | 需要什么 |
 | --- | --- | --- |
 | **核心层** | 纯 Bash 写的监控 + 推送（`powerguard.sh` + `lib/`），零第三方依赖 | macOS 自带的 bash / osascript |
-| **菜单栏 App** | 可选的可视化界面（`app/PowerGuard.app`）：状态显示、收件人管理、暂停/恢复、发测试消息 | macOS 13+ |
+| **菜单栏 App** | 可选的可视化界面（源码在 `app/`，用 `app/build-app.sh` 编译出 `PowerGuard.app`）：状态显示、收件人管理、暂停/恢复、发测试消息 | macOS 13+ |
 
 > **先说清楚一件事**：这个工具只能**提醒**你，救不了正在跑的服务器。
 > 真要防意外断电，需要 UPS。另外，笔记本长期插着电当服务器会加速电池老化，
@@ -307,8 +307,8 @@ App 界面上的图标含义：
 
 ### 自己编译 App
 
-仓库里已经有编好的 `app/PowerGuard.app`（arm64 + x86_64，部署目标 macOS 13.0，ad-hoc 签名）。
-想自己编：
+App 是源码形式放在仓库里的（`app/PowerGuard.swift`），编译产物没有提交进来，
+在 `app/` 目录下跑一次构建脚本就有了（arm64 + x86_64 通用二进制，部署目标 macOS 13.0，ad-hoc 签名）：
 
 ```bash
 cd app
