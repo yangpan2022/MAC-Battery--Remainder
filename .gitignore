@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# 本地测试用的假数据目录（测试时用 POWERGUARD_HOME / POWERGUARD_LOGDIR 指过来）
+.testhome/
+.livetest/
+.installhome/
+
+# 编译缓存和产物：App 请用 app/build-app.sh 现场编译
+.build/
+app/.build/
+app/PowerGuard.app/
+
+# 打出来的分发包
+*.tar.gz
+*.zip
+*.dmg

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  PowerGuard 后台监控服务（launchd 模板）
+
+  这个文件是**模板**，不要手工使用：install.sh 会把下面的占位符替换成真实路径，
+  再拷贝到 ~/Library/LaunchAgents/com.powerguard.agent.plist 并装载。
+
+    __PG_EXEC__       powerguard.sh 的绝对路径
+    __PG_OUT__        launchd 捕获的标准输出
+    __PG_ERR__        launchd 捕获的标准错误
+
+  手工操作（一般不需要）：
+    cp com.powerguard.plist ~/Library/LaunchAgents/com.powerguard.agent.plist
+    launchctl load  ~/Library/LaunchAgents/com.powerguard.agent.plist
+    launchctl list  com.powerguard.agent
+    launchctl unload ~/Library/LaunchAgents/com.powerguard.agent.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.powerguard.agent</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__PG_EXEC__</string>
+    <string>run</string>
+  </array>
+
+  <!-- 登录后自动启动 -->
+  <key>RunAtLoad</key>
+  <true/>
+
+  <!-- 只在异常退出时才重新拉起（正常退出＝收到终止信号，不重启，避免卸载时死循环） -->
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+
+  <!-- 崩溃重启的最小间隔，防止疯狂重启 -->
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+
+  <key>StandardOutPath</key>
+  <string>__PG_OUT__</string>
+  <key>StandardErrorPath</key>
+  <string>__PG_ERR__</string>
+
+  <!-- 让系统知道这是后台常驻任务，能省一点电 -->
+  <key>ProcessType</key>
+  <string>Background</string>
+
+  <key>LowPriorityIO</key>
+  <true/>
+</dict>
+</plist>

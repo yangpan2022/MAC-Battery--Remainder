@@ -1,0 +1,74 @@
+# ===========================================================================
+# PowerGuard 配置文件
+# ---------------------------------------------------------------------------
+# 位置：~/Library/Application Support/PowerGuard/config.conf
+# 说明：这其实是一段 bash 片段（键=值），由主程序 source 进来。
+#       * 等号两边不要留空格
+#       * 值里的字符串要用引号
+#       * 改完**不需要**重启服务：监控每轮都会重新读取本文件
+#       * 想快速打开：./powerguard.sh 的菜单栏 App 里有「打开配置文件」，
+#         或在终端执行：  open -e "$HOME/Library/Application Support/PowerGuard/config.conf"
+# 排错：写坏了也不要紧，语法错误会被忽略并记一条警告，但最好还是 `bash -n` 检查一下。
+# ===========================================================================
+
+# --- 轮询 ---------------------------------------------------------------
+# 每隔几秒读一次电源状态。默认 20 秒足够了，改小只会更费电。
+PG_POLL_INTERVAL=20
+
+# --- 低电量阈值（百分比）-------------------------------------------------
+# 三个档位从高到低。每个档位在一次放电过程中只提醒一次；
+# 电量回到「阈值 + PG_HYSTERESIS」以上，才会重新武装该档位。
+# 已经跌破多档时，只会发**最低的那一档**，不会一次补发三条。
+PG_TH_30=30
+PG_TH_20=20
+PG_TH_10=10
+
+# 迟滞：电量回升到 阈值+该值 以上才重新武装（防止在阈值附近来回抖动刷屏）
+PG_HYSTERESIS=5
+
+# --- 断电/恢复供电 -------------------------------------------------------
+# 拔掉电源后，要连续断开这么多秒才认为"真的断电了"（防止手滑碰掉线）
+PG_AC_COOLDOWN=120
+
+# 各事件的推送开关
+PG_NOTIFY_AC_LOST=true      # 断开电源
+PG_NOTIFY_AC_RESTORE=true   # 恢复供电
+PG_NOTIFY_THRESHOLD=true    # 低电量
+
+# --- 本机通知（macOS 通知中心）------------------------------------------
+# 只在本机弹横幅，**不会**同步到 iPhone（Apple 没有提供 Mac→iPhone 的通知通道）
+PG_LOCAL_NOTIFY=true
+PG_LOCAL_SOUND="Glass"      # 声音名：Glass / Ping / Funk / Basso 或留空 "" 静音
+
+# --- iMessage 推送（真正能到 iPhone 的通道）------------------------------
+# 收件人名单在另一个文件里，用 ./powerguard.sh recipients add <地址> 管理：
+#   ~/Library/Application Support/PowerGuard/recipients.list
+# 最省事的用法：把**你自己的** Apple ID 邮箱写进去（发给自己的 iMessage 免费，
+# 并且会自动同步到你的 iPhone / iPad / Apple Watch / 其它 Mac）。
+PG_IMESSAGE_ENABLED=true
+
+# --- 备用通道（默认全关；留空即禁用）------------------------------------
+# 万一 macOS 收紧权限导致 AppleScript 发不出 iMessage，可以用这些顶上。
+# Bark（iOS App，免费）：形如 https://api.day.app/你的Key
+PG_BARK_URL=""
+# ntfy（开源，可自建）：形如 https://ntfy.sh/你的主题名
+PG_NTFY_URL=""
+# 通用 Webhook（POST 一段 JSON，可接 Server酱 / 飞书 / 钉钉机器人等）
+PG_WEBHOOK_URL=""
+
+# --- 低电量自动动作（危险，默认关闭）------------------------------------
+# 默认关闭。如果打开，电量低于 PG_ACTION_THRESHOLD 时会执行 PG_ACTION_COMMAND。
+# !! 警告 !! 这是一条会被 root/当前用户执行的 shell 命令，写错了会直接关掉你的服务器。
+# 例：PG_ACTION_COMMAND="/usr/bin/say 'PowerGuard 即将断电'"
+PG_ACTION_ENABLED=false
+PG_ACTION_THRESHOLD=5
+PG_ACTION_COMMAND=""
+
+# --- 日志 ---------------------------------------------------------------
+PG_LOG_RETENTION_DAYS=7     # 保留多少天
+PG_LOG_MAX_KB=2048          # 超过多少 KB 就轮转（保留 .1 一份）
+PG_VERBOSE=false            # 每次心跳都记一行日志（排错时临时开）
+
+# --- 显示 ---------------------------------------------------------------
+# 本机名字（出现在通知标题里）。留空 = 自动取"电脑名称"。
+PG_HOSTNAME=""
